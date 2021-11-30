@@ -69,13 +69,14 @@
 
 
         var schools = L.geoJSON(null, {
-            pointToLayer:function(obj, latLng) {
+            pointToLayer:function(feature, latLng) {
                 return L.circleMarker(latLng, {
                     radius:3,
                     fillOpacity:1,
                     fillColor:"#e7298a",
                     color:"transparent"
                 })
+                .bindTooltip(feature.properties['Campus Name']);
             }
         }).addTo(map);
 
@@ -102,15 +103,25 @@
 
 
         // get the data
-        Object.keys(overlay).forEach(key => {
+        Object.keys(overlay).reverse().forEach(key => {
             let filename = `${key}.geojson`;
 
             fetch(filename)
             .then(res => res.json())
             .then(data => {
                 overlay[key].addData(data);
+
+                if(key == "Cultural Districts") {
+                    // console.log("front");
+                    // 
+                }
+
+                schools.bringToFront();
             });
         });
+
+
+        
     </script>
 </body>
 </html>
