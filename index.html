@@ -36,18 +36,30 @@
         }).setView([37.751505, -122.4509], 12);
 
         // 
-        let layer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+        let layerLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             attribution:'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>',
             subdomains: 'abcd',
             maxZoom: 20,
             minZoom: 0
         });
 
-        layer.addTo(map);
+        layerLight.addTo(map);
+
+        let layerDark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+            attribution:'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20,
+            minZoom: 0
+        });
+
+        layerDark.addTo(map);
 
 
         // map layers
         var neighbourhoods = L.geoJSON(null, {
+            onEachFeature:function(feature, layer) {
+                layer.bindPopup("<b>Neighborhood Name</b> </br>" + feature.properties.nhood);
+            },
             style:function(feature) {
                 return {
                     fillColor:"#1b9e77",
@@ -58,6 +70,9 @@
         }).addTo(map);
 
         var culturalDistricts = L.geoJSON(null, {
+            onEachFeature:function(feature, layer) {
+                layer.bindPopup("<b>Cultural District Name</b> </br>" + feature.properties.district_name);
+            },
             style:function(feature) {
                     return {
                         weight:1,
@@ -99,7 +114,10 @@
             // "Historical Zoning Districts":historicalDistricts
         };
 
-        L.control.layers({}, overlay, {collapsed:false}).addTo(map);
+        L.control.layers({
+            "Dark":layerDark,
+            "Light":layerLight
+        }, overlay, {collapsed:false}).addTo(map);
 
 
         // get the data
@@ -116,6 +134,7 @@
                     // 
                 }
 
+                culturalDistricts.bringToFront();
                 schools.bringToFront();
             });
         });
